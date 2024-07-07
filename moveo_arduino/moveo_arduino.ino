@@ -32,6 +32,20 @@
 #define E0_DIR_PIN         28
 #define E0_ENABLE_PIN      24
 
+// Max velocities - empirical
+#define joint_1_max_vel    0
+#define joint_2_max_vel    0
+#define joint_3_max_vel    4000
+#define joint_4_max_vel    0   
+#define joint_5_max_vel    5000
+
+// Max accelerations - empirical
+#define joint_1_max_accel    0
+#define joint_2_max_accel    0
+#define joint_3_max_accel    10000
+#define joint_4_max_accel    0   
+#define joint_5_max_accel    5000
+
 AccelStepper joint1(AccelStepper::DRIVER, X_STEP_PIN, X_DIR_PIN);
 AccelStepper joint2(AccelStepper::DRIVER, Z_STEP_PIN, Z_DIR_PIN);
 AccelStepper joint3(AccelStepper::DRIVER, Y_STEP_PIN, Y_DIR_PIN);
@@ -72,15 +86,15 @@ void setup() {
   joint1.setMaxSpeed(1500);
   joint2.setMaxSpeed(750);
   joint3.setMaxSpeed(2000);
-  joint4.setMaxSpeed(500);
+  joint4.setMaxSpeed(0);
   joint5.setMaxSpeed(1000);
 
   // Configure each stepper acceleration
   joint1.setAcceleration(10000.0);
-  joint2.setAcceleration(10000.0);
+  joint2.setAcceleration(1000.0);
   joint3.setAcceleration(10000.0);
-  joint4.setAcceleration(10000.0);
-  joint5.setAcceleration(10000.0);
+  joint4.setAcceleration(0.0);
+  joint5.setAcceleration(5000.0);
 
   // Then give them to MultiStepper to manage
   // steppers.addStepper(joint1);
@@ -119,7 +133,7 @@ void loop() {
       joints[joint_num - 1]->runToNewPosition(position);
     } else if (command.startsWith("GRIP ")) 
     {
-      int angle;
+      int angle = 0;
       sscanf(command.c_str(), "GRIP %d", &angle);
       gripper.write(angle); // Set servo angle
       digitalWrite(13, HIGH - digitalRead(13)); // Toggle LED to indicate gripper command received

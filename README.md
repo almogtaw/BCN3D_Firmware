@@ -18,8 +18,7 @@ send serial commands using:
     move joint_{joint #} {position} {velocity}
 
     examples:
-    GRIP 90
-    move joint_3 20000 10000
-
+    echo "move joint_3 200 100" > /dev/ttyACM0
+    echo "GRIP 90" > /dev/ttyACM0
 ## Dependencies
 AccelStepper library
