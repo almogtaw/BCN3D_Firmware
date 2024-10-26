@@ -94,7 +94,7 @@ long joint_velocities[NUM_JOINTS] = {0, 0, 0, 0, 0};
 
 
 void setup() {
-  Serial.begin(57600); // Start serial communication
+  Serial.begin(115200); // Start serial communication
   pinMode(13, OUTPUT);
 
   // Configure each stepper enable pin
@@ -158,14 +158,14 @@ void loop()
       long position, velocity;
       
       // Parse the command in the format: Joint_<joint #> position <position> velocity <velocity>
-      int parsed_items = sscanf(command.c_str(), "Joint_%d podition %ld velocity %ld", &joint_num, &position, &velocity);
+      int parsed_items = sscanf(command.c_str(), "Joint_%d position %ld velocity %ld", &joint_num, &position, &velocity);
 
       if (parsed_items == 3 && joint_num >= 1 && joint_num <= NUM_JOINTS) 
       {
         // Update the joint with new position and velocity
         int joint_index = joint_num - 1;
         joints[joint_index]->setMaxSpeed(velocity);
-        joints[joint_index]->runToNewPosition(position);
+        joints[joint_index]->moveTo(position);
         
         // Store the last position and velocity commands
         joint_positions[joint_index] = position;
@@ -192,13 +192,14 @@ void loop()
         // Retrieve and send the current state of the requested joint
         int joint_index = joint_num - 1;
         long current_position = joints[joint_index]->currentPosition();
+        long current_velocity = joints[joint_index]->speed();
 
         Serial.print("Joint_");
         Serial.print(joint_num);
         Serial.print(" curr_pos ");
         Serial.print(current_position);
         Serial.print(" curr_vel ");
-        Serial.println(joint_velocities[joint_index]);
+        Serial.println(current_velocity);
       } 
       else 
       {
